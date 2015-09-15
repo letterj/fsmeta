@@ -1,0 +1,116 @@
+DATABASE: fsdisk
+
+TABLE:
+    fsdevice
+    fsnode
+
+ACTIONS:
+
+    put device(data)
+      returns(json) {everything}
+
+    get device(device id)
+      returns(json) {everything}
+
+CREATE OR REPLACE FUNCTION get_Device(device_id BIGINT )
+RETURNS json
+$$
+  DECLARE
+    drow fsdevice%ROWTYPE;
+  BEGIN
+    SELECT * INTO drow FROM fsdevice WHERE id = device_id;
+    RETURN row_to_json(drow);
+  END;
+$$ LANUGUAGE plpsql;
+
+    post device (id, data)
+      return(json) {everything}
+
+    delete device(id)
+      returns bool
+
+
+    put fsnode(data)
+      returns(json) {everything}
+
+    get fsnode(device id)
+      returns(json) {everything}
+
+    post fsnode (id, data)
+      return(json) {everything}
+
+    delete fsnode(id)
+      returns bool
+
+
+
+
+
+
+# CREATE DEVICE
+INSERT INTO fsnode(inode, parent, name, type, mtime, block, path)
+  VALUES(uuid_generate_v4(), NULL, '/', 'directory', now(), 4096)
+  RETURNING inode;
+
+INSERT INTO fsdevice (device, name, customerid, fsnode_inode, size_gb)
+  VALUES(uuid_generate_v4(), 1,  '7a50ac42-ea88-4070-b197-cb2bcb5ee72c', 10)
+
+
+CREATE OR REPLACE FUNCTION putDevice(name TEXT, customer_id BIGINT, size_gb INTEGER) RETURNS UUID AS $newdevice$
+  DECLARE
+    newinode    UUID;
+    newdevice   UUID;
+  BEGIN
+    INSERT INTO fsnode (inode, parent, name, type, mtime, blocks)
+      VALUES(uuid_generate_v4(), NULL, '/', 'directory', now(), 4096)
+      RETURNING inode INTO newinode;
+    INSERT INTO fsdevice (device, name, customerid, fsnode_inode, sizegb)
+      VALUES(uuid_generate_v4(), name, customer_id, newinode, size_gb)
+      RETURNING device INTO newdevice;
+    RETURN newdevice;
+  END;
+$newdevice$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION putInode(p_parent, p_name, p_type, p_mode, p_nlink,
+  p_uid, p_gid, p_rdev, p_size, p_blksize, p_blocks) RETURNS UUID AS $newinode$
+  BEGIN
+    INSERT INTO fsnode (parent, name, type, mode, nlink, uid,
+        gid, rdev, size, blksize, blocks)
+      VALUES (p_parent, p_name, p_type, p_mode, p_nlink, p_uid,
+        p_gid, p_rdev, p_size, p_blksize, p_blocks)
+      RETURNING inode INTO newinode;
+    RETURN newinode;
+  END;
+$newinode$ LANUGUAGE plpsql;
+
+CREATE OR REPLACE FUNCTION getInode(node UUID)
+RETURNS json
+$$
+  DECLARE
+    irow fsnode%ROWTYPE;
+  BEGIN
+    SELECT * INTO irow FROM fsnode WHERE inode = node;
+    RETURN row_to_json(irow);
+  END;
+$$ LANUGUAGE plpsql;
+
+
+
+
+/
+--var
+----log
+------syslog
+--------syslog-2015-01.log
+------postgresql
+--------postgresql-2015-01-01.log
+--------archive
+----------2014-01
+------------postgresql-2014-01-01.log.gz
+------------postgresql-2014-01-02.log.gz
+
+
+
+INSERT INTO fsnode(parent, inode, name, type)
+  VALUES ('bc7a24b0-ef1e-4ec2-89f4-2bd2c558fd08', uuid_generate_v4(), 'dir1')
