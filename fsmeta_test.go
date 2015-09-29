@@ -10,6 +10,10 @@ import (
 
 var fsmeta = forest.NewClient("http://localhost:8080", new(http.Client))
 
+func TestSetup_DB(t *testing.T) {
+	var tables
+}
+
 func Test_fsmetaExists(t *testing.T) {
 	r := fsmeta.GET(t, forest.Path("/"))
 	forest.ExpectStatus(t, r, 200)
@@ -64,4 +68,18 @@ func TestCreateDevice_Created(t *testing.T) {
 	tDevice := fmt.Sprintf(`{"name": "%s", "blocksize": 4096, "sizegb": 10}`, name)
 	r := fsmeta.POST(t, forest.Path("/{customerID}/device/{deviceID}", custID, deviceID).Body(tDevice))
 	forest.ExpectStatus(t, r, 201)
+}
+
+func TestDeleteDevice_NotFound(t *testing.T) {
+	var custID = "1234"
+	var deviceID = "99999"
+	r := fsmeta.DELETE(t, forest.Path("/{customerID}/device/{deviceID}", custID, deviceID))
+	forest.ExpectStatus(t, r, 404)
+}
+
+func TestDeleteDevice_Deleted(t *testing.T) {
+	var custID = "1234"
+	var deviceID = "9"
+	r := fsmeta.DELETE(t, forest.Path("/{customerID}/device/{deviceID}", custID, deviceID))
+	forest.ExpectStatus(t, r, 204)
 }

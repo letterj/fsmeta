@@ -39,4 +39,16 @@ var routes = Routes{
 		"/{customerID}/device/{deviceID}",
 		DeviceCreate,
 	},
+	Route{
+		"DeviceDelete",
+		"DELETE",
+		"/{customerID}/device/{deviceID}",
+		DeviceDelete,
+	},
+	Route{
+		"DeviceUpdate",
+		"PUT",
+		"/{customerID}/device/{deviceID}",
+		DeviceUpdate,
+	},
 }

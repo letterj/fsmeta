@@ -35,7 +35,7 @@ func DeviceIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	custdevices = DstoreFindDevices(customerID)
-	if len(custdevices) == 0 {
+	if custdevices == nil {
 		w.WriteHeader(http.StatusNotFound)
 	} else {
 		w.WriteHeader(http.StatusOK)
@@ -114,9 +114,75 @@ func DeviceCreate(w http.ResponseWriter, r *http.Request) {
 	device.ID = deviceID
 	device.CustomerID = customerID
 
-	d := DstoreCreateDevice(device)
-	w.WriteHeader(http.StatusCreated)
-	if err := json.NewEncoder(w).Encode(d); err != nil {
-		panic(err)
+	newdeviceID := DstoreCreateDevice(device)
+	if newdeviceID != deviceID {
+		w.WriteHeader(http.StatusInternalServerError)
+		if err := json.NewEncoder(w).Encode(device); err != nil {
+			panic(err)
+		}
+	} else {
+		w.WriteHeader(http.StatusCreated)
+		if err := json.NewEncoder(w).Encode("OK"); err != nil {
+			panic(err)
+		}
 	}
+}
+
+// DeviceDelete deletes a new device
+func DeviceDelete(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	customerID, err := strconv.ParseInt(vars["customerID"], 10, 64)
+	if err != nil {
+		// Need to return a 412 here
+		fmt.Println(err)
+	}
+
+	deviceID, err := strconv.ParseInt(vars["deviceID"], 10, 64)
+	if err != nil {
+		// Need to return a 412 here
+		fmt.Println(err)
+	}
+
+	if DstoreFindDevice(customerID, deviceID) == (Device{}) {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	//  Do Delete stuff here
+	if DstoreDestroyDevice(customerID, deviceID) {
+		w.WriteHeader(http.StatusInternalServerError)
+	} else {
+		w.WriteHeader(http.StatusOK)
+	}
+	return
+}
+
+// DeviceUpdate deletes a new device
+func DeviceUpdate(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	customerID, err := strconv.ParseInt(vars["customerID"], 10, 64)
+	if err != nil {
+		// Need to return a 412 here
+		fmt.Println(err)
+	}
+
+	deviceID, err := strconv.ParseInt(vars["deviceID"], 10, 64)
+	if err != nil {
+		// Need to return a 412 here
+		fmt.Println(err)
+	}
+
+	if DstoreFindDevice(customerID, deviceID) == (Device{}) {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	//  Do Delete stuff here
+	w.WriteHeader(http.StatusOK)
+	return
 }
