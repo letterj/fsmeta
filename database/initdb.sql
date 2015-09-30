@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS fsdevice
   name              TEXT,
   blocksize         INT DEFAULT 4096,
   sizegb            BIGINT,
+  created           TIMESTAMP,
   PRIMARY KEY(customerid, id)
 );
 
@@ -22,6 +23,7 @@ CREATE TABLE IF NOT EXISTS fsnode
   inode       BIGINT,
   name        TEXT,
   attr        JSONB,
-  fsdevice_id BIGINT      REFERENCES fsdevice(id)
+  created     TIMESTAMP,
+  fsdevice_id BIGINT,
   PRIMARY KEY (parent, inode)
 );
