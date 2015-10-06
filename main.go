@@ -15,9 +15,13 @@ func main() {
 
 	var err error
 
-	dbsrc := dbInfo{5432, "localhost", "fsdisk", "jay1279", "jay1279", "disable"}
-	dbsource := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable",
-		dbsrc.user, dbsrc.password, dbsrc.location, dbsrc.name)
+	//dbsrc := dbInfo{5432, "localhost", "fsdisk", "jay1279", "jay1279", "disable"}
+	//dbsource := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable",
+	//	dbsrc.user, dbsrc.password, dbsrc.location, dbsrc.name)
+    dbsrc := dbInfo{5432, "localhost", "fsdisk", "jay1279", "", "disable"}
+    dbsource := fmt.Sprintf("postgres://%s/%s?sslmode=disable",
+        dbsrc.location, dbsrc.name)
+
 	fmt.Println(dbsource)
 
 	db = DbConnect(dbsource)
