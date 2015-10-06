@@ -46,9 +46,9 @@ func Test_fsmetaExists(t *testing.T) {
 func TestGetDeviceList_NotFound(t *testing.T) {
 	//Setup
 	setupDB()
+	custID := "54321"
 
 	//Actual Test
-	var custID = "54321"
 	r := fsmeta.GET(t, forest.Path("/{custID}/device", custID))
 	forest.ExpectStatus(t, r, 404)
 }
@@ -57,38 +57,38 @@ func TestGetDeviceList_NotFound(t *testing.T) {
 func TestGetDeviceList(t *testing.T) {
 	//Setup
 	setupDB()
-	var custID = "1234"
+	custID := "1234"
 	r1 := addDevice(t, custID, "1", "boot")
 	r2 := addDevice(t, custID, "2", "data")
 
 	//Actual Test
-	rt := fsmeta.GET(t, forest.Path("/{custID}/device", custID))
+	tr := fsmeta.GET(t, forest.Path("/{custID}/device", custID))
 	forest.ExpectStatus(t, r1, 201)
 	forest.ExpectStatus(t, r2, 201)
-	forest.ExpectStatus(t, rt, 200)
+	forest.ExpectStatus(t, tr, 200)
 }
 
 // Looking for a specific device for a specific customer
 func TestGetDevice_One(t *testing.T) {
 	//Setup
 	setupDB()
-	var custID = "1234"
-	var deviceID = "1"
+	custID := "1234"
+	deviceID := "1"
 
 	r1 := addDevice(t, custID, deviceID, "boot")
 
 	//Actual Test
-	rt := fsmeta.GET(t, forest.Path("/{customerID}/device/{deviceID}", custID, deviceID))
+	tr := fsmeta.GET(t, forest.Path("/{customerID}/device/{deviceID}", custID, deviceID))
 	forest.ExpectStatus(t, r1, 201)
-	forest.ExpectStatus(t, rt, 200)
+	forest.ExpectStatus(t, tr, 200)
 }
 
 // Look for a specific device for a specific customer
 func TestGetDevice_Two(t *testing.T) {
 	//Setup
 	setupDB()
-	var custID = "1234"
-	var deviceID = "2"
+	custID := "1234"
+	deviceID := "2"
 	r1 := addDevice(t, custID, "1", "boot")
 	r2 := addDevice(t, custID, deviceID, "data")
 
@@ -100,40 +100,65 @@ func TestGetDevice_Two(t *testing.T) {
 }
 
 func TestGetDevice_NotFound(t *testing.T) {
-	var custID = "1234"
-	var deviceID = "999999999"
-	r := fsmeta.GET(t, forest.Path("/{customerID}/device/{deviceID}", custID, deviceID))
-	forest.ExpectStatus(t, r, 404)
+	//Setup
+	setupDB()
+	custID := "1234"
+	deviceID := "999999999"
+
+	//Actual Test
+	tr := fsmeta.GET(t, forest.Path("/{customerID}/device/{deviceID}", custID, deviceID))
+	forest.ExpectStatus(t, tr, 404)
 }
 
 func TestCreateDevice_Conflict(t *testing.T) {
-	var custID = "1234"
-	var deviceID = "1"
-	var name = "boot"
+	//Setup
+	setupDB()
+	custID := "1234"
+	deviceID := "1"
+	name := "boot"
+	r1 := addDevice(t, custID, deviceID, name)
+
+	//Actual Test
 	tDevice := fmt.Sprintf(`{"name": "%s", "blocksize": 4096, "sizegb": 10}`, name)
-	r := fsmeta.POST(t, forest.Path("/{customerID}/device/{deviceID}", custID, deviceID).Body(tDevice))
-	forest.ExpectStatus(t, r, 409)
+	tr := fsmeta.POST(t, forest.Path("/{customerID}/device/{deviceID}", custID, deviceID).Body(tDevice))
+	forest.ExpectStatus(t, r1, 201)
+	forest.ExpectStatus(t, tr, 409)
 }
 
 func TestCreateDevice_Created(t *testing.T) {
-	var custID = "1234"
-	var deviceID = "9"
-	var name = "data1"
+	//Setup
+	setupDB()
+	custID := "1234"
+	deviceID := "9"
+	name := "data1"
+
+	//Actual Test
 	tDevice := fmt.Sprintf(`{"name": "%s", "blocksize": 4096, "sizegb": 10}`, name)
-	r := fsmeta.POST(t, forest.Path("/{customerID}/device/{deviceID}", custID, deviceID).Body(tDevice))
-	forest.ExpectStatus(t, r, 201)
+	tr := fsmeta.POST(t, forest.Path("/{customerID}/device/{deviceID}", custID, deviceID).Body(tDevice))
+	forest.ExpectStatus(t, tr, 201)
 }
 
 func TestDeleteDevice_NotFound(t *testing.T) {
-	var custID = "1234"
-	var deviceID = "99999"
-	r := fsmeta.DELETE(t, forest.Path("/{customerID}/device/{deviceID}", custID, deviceID))
-	forest.ExpectStatus(t, r, 404)
+	//Setup
+	setupDB()
+	custID := "1234"
+	deviceID := "99999"
+
+	//Actual Test
+	tr := fsmeta.DELETE(t, forest.Path("/{customerID}/device/{deviceID}", custID, deviceID))
+	forest.ExpectStatus(t, tr, 404)
 }
 
 func TestDeleteDevice_Deleted(t *testing.T) {
-	var custID = "1234"
-	var deviceID = "9"
-	r := fsmeta.DELETE(t, forest.Path("/{customerID}/device/{deviceID}", custID, deviceID))
-	forest.ExpectStatus(t, r, 204)
+	//Setup
+	setupDB()
+	custID := "1234"
+	deviceID := "9"
+	name := "data2"
+	r1 := addDevice(t, custID, deviceID, name)
+
+	//Actual Test
+	tr := fsmeta.DELETE(t, forest.Path("/{customerID}/device/{deviceID}", custID, deviceID))
+	forest.ExpectStatus(t, r1, 201)
+	forest.ExpectStatus(t, tr, 204)
 }

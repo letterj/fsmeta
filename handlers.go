@@ -152,9 +152,9 @@ func DeviceDelete(w http.ResponseWriter, r *http.Request) {
 	}
 	//  Do Delete stuff here
 	if DstoreDestroyDevice(customerID, deviceID) {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusNoContent)
 	} else {
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 	return
 }
