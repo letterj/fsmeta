@@ -10,6 +10,9 @@ machine:
     GO15VENDOREXPERIMENT: 1
   post:
     - go version
+    - go build && go install
+    - ./fsmeta:
+          background=true
 database:
   override:
     - pwd && ls
