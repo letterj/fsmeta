@@ -1,7 +1,10 @@
 machine:
+  services:
+    - postgresql
   pre:
     - wget https://storage.googleapis.com/golang/go1.5.1.linux-amd64.tar.gz
     - tar zxvf go1.5.1.linux-amd64.tar.gz
+    - psql -h localhost -U ubuntu -d circle_test -f database/initdb.sql
   environment:
     GOROOT: ${HOME}/go
     PATH: ${GOROOT}/bin:${PATH}
