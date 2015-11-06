@@ -17,7 +17,7 @@ machine:
     - echo $PPATH
     - go build && go install
     - ./fsmeta
-        background: true
+        background: 1
 dependencies:
   pre:
     - mkdir -p ${HOME}/go/src/github.com/$CIRCLE_PROJECT_USERNAME
