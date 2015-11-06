@@ -3,16 +3,28 @@ machine:
     - postgresql
   pre:
     - wget https://storage.googleapis.com/golang/go1.5.1.linux-amd64.tar.gz
-    - tar zxvf go1.5.1.linux-amd64.tar.gz
+    - mkdir ~/go1.5.1
+    - tar -C ~/go1.5.1 -xzf go1.5.1.linux-amd64.tar.gz
   environment:
-    GOROOT: ${HOME}/go
-    PATH: ${GOROOT}/bin:${PATH}
+    GOROOT: ${HOME}/go1.5.1/go
     GO15VENDOREXPERIMENT: 1
+    GOPATH: ${HOME}/go
+    PATH: $GOPATH/bin:${GOROOT}/bin:${PATH}
+    PPATH: ${HOME}/go/src/github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
+    BUILDPATH: $PPATH/packaging/root/usr/local/bin
   post:
     - go version
+    - echo $PPATH
     - go build && go install
-    - ./fsmeta:
-          background: true
+    - ./fsmeta
+        background: true
+dependencies:
+  pre:
+    - mkdir -p ${HOME}/go/src/github.com/$CIRCLE_PROJECT_USERNAME
+    - mv ~/$CIRCLE_PROJECT_REPONAME ${HOME}/go/src/github.com/$CIRCLE_PROJECT_USERNAME
+    - ln -s $PPATH ~/$CIRCLE_PROJECT_REPONAME
+  override:
+    - go get -v github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/...
 database:
   override:
     - pwd && ls
