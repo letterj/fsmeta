@@ -4,10 +4,16 @@ machine:
   pre:
     - wget https://storage.googleapis.com/golang/go1.5.1.linux-amd64.tar.gz
     - tar zxvf go1.5.1.linux-amd64.tar.gz
-    - psql -h localhost -U ubuntu -d circle_test -f database/initdb.sql
   environment:
     GOROOT: ${HOME}/go
     PATH: ${GOROOT}/bin:${PATH}
     GO15VENDOREXPERIMENT: 1
   post:
     - go version
+    - go build && go install
+    - ./fsmeta:
+          background: true
+database:
+  override:
+    - pwd && ls
+    - psql -h localhost -U ubuntu -d circle_test -f database/initdb.sql
