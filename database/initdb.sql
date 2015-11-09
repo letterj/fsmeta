@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS fsdevice
   name              TEXT,
   blocksize         INT DEFAULT 4096,
   sizegb            BIGINT,
-  created           TIMESTAMP,
+  created           TIMESTAMP DEFAULT NOW(),
   PRIMARY KEY(customerid, id)
 );
 
@@ -27,3 +27,5 @@ CREATE TABLE IF NOT EXISTS fsnode
   fsdevice_id BIGINT,
   PRIMARY KEY (parent, inode)
 );
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO ubuntu;

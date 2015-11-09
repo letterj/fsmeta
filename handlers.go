@@ -113,6 +113,9 @@ func DeviceCreate(w http.ResponseWriter, r *http.Request) {
 
 	device.ID = deviceID
 	device.CustomerID = customerID
+	fmt.Println("=====================================")
+	fmt.Println(device)
+	fmt.Println("=====================================")
 
 	newdeviceID := DstoreCreateDevice(device)
 	if newdeviceID != deviceID {
