@@ -22,6 +22,7 @@ dependencies:
     - ln -s $PPATH ~/$CIRCLE_PROJECT_REPONAME
   override:
     - go get -v github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/...
+    - go get -v github.com/emicklei/forest
 database:
   override:
     - pwd && ls
@@ -34,4 +35,4 @@ test:
     - ${HOME}/go/bin/fsmeta:
         background: true
   override:
-    - cd ${HOME}/go/src/github.com/$CIRCLE_USERNAME/$CIRCLE_PROJECT_REPONAME/ && go test -v
+    - go test github.com/letterj/fsmeta/...
