@@ -19,8 +19,8 @@ func main() {
 	//dbsource := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable",
 	//	dbsrc.user, dbsrc.password, dbsrc.location, dbsrc.name)
 	dbsrc := dbInfo{5432, "localhost", "circle_test", "ubuntu", "", "disable"}
-	dbsource := fmt.Sprintf("postgres://%s/%s?sslmode=disable",
-		dbsrc.location, dbsrc.name)
+	dbsource := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable",
+		dbsrc.user, dbsrc.password, dbsrc.location, dbsrc.name)
 
 	fmt.Println(dbsource)
 

@@ -39,7 +39,7 @@ func DbConnect(connectionString string) *sql.DB {
 func DstoreFindDevices(cust int64) Devices {
 	var results Devices
 
-	sqlstmt := "SELECT * FROM fsdevice WHERE customerid = $1;"
+	sqlstmt := "SELECT id, name, customerid, blocksize, sizegb FROM fsdevice WHERE customerid = $1;"
 	rows, err := db.Query(sqlstmt, cust)
 	checkErr(err)
 
@@ -57,7 +57,7 @@ func DstoreFindDevices(cust int64) Devices {
 func DstoreFindDevice(cust int64, id int64) Device {
 	var d Device
 
-	sqlstmt := "SELECT * FROM fsdevice WHERE customerid = $1 and id = $2;"
+	sqlstmt := "SELECT id, name, customerid, blocksize, sizegb FROM fsdevice WHERE customerid = $1 and id = $2;"
 	rows, err := db.Query(sqlstmt, cust, id)
 	checkErr(err)
 	for rows.Next() {
