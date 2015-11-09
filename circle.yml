@@ -31,7 +31,5 @@ test:
   pre:
     - go version
     - go install github.com/letterj/fsmeta/...
-    - ./fsmeta
-        background: true
   override:
     - go test github.com/letterj/fsmeta/...
