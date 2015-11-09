@@ -34,4 +34,4 @@ test:
     - ${HOME}/go/bin/fsmeta:
         background: true
   override:
-    - go test github.com/letterj/fsmeta/...
+    - cd ${HOME}/go/src/github.com/$CIRCLE_USERNAME/$CIRCLE_PROJECT_REPONAME/ && go test -v
