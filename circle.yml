@@ -15,7 +15,7 @@ machine:
   post:
     - go version
     - echo $PPATH
-    - go build && go install
+    - cd ${HOME}/go/src/github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME && go build && go install
     - ./fsmeta:
         background: true
 dependencies:
