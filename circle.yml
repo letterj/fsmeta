@@ -15,9 +15,6 @@ machine:
   post:
     - go version
     - echo $PPATH
-    - cd ${HOME}/go/src/github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME && go build && go install
-    - ./fsmeta:
-        background: true
 dependencies:
   pre:
     - mkdir -p ${HOME}/go/src/github.com/$CIRCLE_PROJECT_USERNAME
@@ -29,3 +26,12 @@ database:
   override:
     - pwd && ls
     - psql -h localhost -U ubuntu -d circle_test -f database/initdb.sql
+## Customize test commands
+test:
+  pre:
+    - go version
+    - go install github.com/letterj/fsmeta/...
+    - ./fsmeta
+        background: true
+  override:
+    - go test github.com/letterj/fsmeta/...
